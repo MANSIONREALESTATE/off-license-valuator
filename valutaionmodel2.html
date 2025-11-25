@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mansion Real Estate – Off License Valuator (Realistic)</title>
+<style>
+    :root {
+        --mansion-brown:#4B3A2A;
+        --form-beige:#fdf5e6;
+        --label-width:200px;
+        --input-width:260px;
+    }
+    html,body{height:100%;margin:0;font-family:Calibri, Arial, sans-serif;background:var(--mansion-brown);color:#222;}
+    .page-center{max-width:980px;margin:28px auto;padding:0 12px;}
+    h1{color:var(--form-beige);background:transparent;padding:6px 0;margin:0 0 12px;font-size:42px;text-align:center;}
+    .form-card{background:var(--form-beige);border-radius:10px;padding:18px;box-shadow:0 8px 22px rgba(0,0,0,0.18);}
+    .section{margin-bottom:14px;}
+    .section h2{margin:0 0 8px 0;color:#2b2b2b;font-size:32px;}
+    .form-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0;}
+    .form-row label.left{width:var(--label-width);min-width:140px;font-weight:700;color:#2b2b2b;}
+    .control{flex:1 1 320px;min-width:180px;}
+    input[type="text"], input[type="email"], input[type="number"], input[type="date"], input[type="time"], select, textarea {
+        width:var(--input-width);max-width:100%;padding:8px;border-radius:6px;border:1px solid #bfbfbf;font-size:14px;box-sizing:border-box;
+    }
+    textarea{height:74px;resize:vertical;}
+    .phone-inline{display:flex;gap:8px;align-items:center;}
+    .phone-inline select{flex:0 0 130px;}
+    .phone-inline input{flex:0 0 200px;}
+    .email-inline{display:flex;gap:8px;align-items:center;}
+    input[type="range"]{width:250px;-webkit-appearance:none;height:8px;background:#e6e6e6;border-radius:6px;}
+    input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--mansion-brown);cursor:pointer;}
+    input[type="range"]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--mansion-brown);cursor:pointer;}
+    input[type="checkbox"], input[type="radio"]{accent-color:var(--mansion-brown);width:18px;height:18px;}
+    .timing-line{display:flex;align-items:center;gap:12px;margin:6px 0;width:100%;}
+    .timing-day-label{width:var(--label-width);min-width:140px;font-weight:600;color:#2b2b2b;}
+    .extraTimingInline{margin-left:calc(var(--label-width)+10px);margin-top:6px;display:block;}
+    .extraTimingInline input[type="time"]{width:140px;}
+    .req{color:#b22222;margin-left:6px;font-weight:700;}
+    button{background:var(--mansion-brown);color:#fff;border:none;padding:10px 14px;border-radius:6px;font-size:15px;cursor:pointer;}
+    #valuationDisplay{font-size:22px;font-weight:700;color:var(--mansion-brown);padding:6px 0;}
+    /* thank you overlay */
+    .thankyou{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:9999;display:none;}
+    .thankyou .box{background:var(--form-beige);padding:22px;border-radius:8px;text-align:center;max-width:720px;box-shadow:0 8px 30px rgba(0,0,0,0.3);}
+    .thankyou h2{margin:0 0 10px 0;color:var(--mansion-brown);}
+    .small{font-size:13px;color:#333;margin-top:6px;}
+    @media (max-width:800px){
+        .form-row label.left{width:130px;}
+        .extraTimingInline{margin-left:12px;}
+        input[type="text"],select,input[type="number"],textarea{width:100%;}
+    }
+</style>
+</head>
+<body>
+<div class="page-center">
+<div style="text-align:center; margin-bottom:12px;">
+    <img src="logo.png" alt="Company Logo" style="max-width:400px; height:auto;">
+</div>
+
+ <h1>Off License Valuator</h1>
+
+    <div class="form-card">
+        <form id="propertyForm" onsubmit="return false;">
+            <!-- BASIC -->
+            <div class="section">
+                <h2>Basic Information</h2>
+
+                <div class="form-row">
+                    <label class="left">Name <span class="req">*</span></label>
+                    <div class="control"><input id="name" type="text" placeholder="John"></div>
+                </div>
+
+                <div class="form-row">
+                    <label class="left">Surname <span class="req">*</span></label>
+                    <div class="control"><input id="surname" type="text" placeholder="Doe"></div>
+                </div>
+
+                <div class="form-row">
+                    <label class="left">Contact Number <span class="req">*</span></label>
+                    <div class="control phone-inline">
+                        <select id="countryCode">
+                            <option value="+44">UK +44</option>
+                            <option value="+1">USA +1</option>
+                            <option value="+91">India +91</option>
+                            <option value="+92">Pakistan +92</option>
+                            <option value="+880">Bangladesh +880</option>
+                            <option value="+61">Australia +61</option>
+                            <option value="+971">UAE +971</option>
+                            <option value="+966">Saudi +966</option>
+                            <option value="+32">Belgium +32</option>
+                            <option value="+39">Italy +39</option>
+                            <option value="+33">France +33</option>
+                            <option value="+49">Germany +49</option>
+                            <option value="+34">Spain +34</option>
+                            <option value="+1">Canada +1</option>
+                        </select>
+                        <input id="phone" type="text" placeholder="7000000000">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label class="left">Email <span class="req">*</span></label>
+                    <div class="control email-inline">
+                        <input id="emailUser" type="text" placeholder="username">
+                        <span>@</span>
+                        <select id="emailDomain">
+                            <option value="gmail.com">gmail.com</option>
+                            <option value="outlook.com">outlook.com</option>
+                            <option value="yahoo.com">yahoo.com</option>
+                            <option value="hotmail.com">hotmail.com</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label class="left">Full Shop Address <span class="req">*</span></label>
+                    <div class="control"><textarea id="address" placeholder="123 High Street, City"></textarea></div>
+                </div>
+            </div>
+
+            <!-- SHOP DETAILS -->
+            <div class="section">
+                <h2>Shop Details</h2>
+
+                <div class="form-row">
+                    <label class="left">Shop Size (sq ft)</label>
+                    <div class="control"><input id="size" type="number" step="1" placeholder="1200"></div>
+                </div>
+
+                <div class="form-row">
+                    <label class="left">Shop Condition</label>
+                    <div class="control">
+                        <select id="condition" onchange="toggleRefurbishDate(); updateValuation();">
+                            <option>New</option>
+                            <option>Refurbished</option>
+                            <option>Used</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row" id="refurbishDateRow" style="display:none;">
+                    <label class="left">Date of Last Refurbishment</label>
+                    <div class="control"><input id="refurbishDate" type="date"></div>
+                </div>
+
+                <!-- ADDED: Store / Property Type -->
+                <div class="form-row">
+                    <label class="left">Store Type</label>
+                    <div class="control">
+                        <select id="storeType" onchange="updateValuation()">
+                            <option value="off-licence">Off Licence</option>
+                            <option value="convenience">Convenience Store</option>
+                            <option value="food-cafe">Food / Café / Takeaway</option>
+                            <option value="other">Other Retail</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label class="left">Shop Visibility</label>
+                    <div class="control">
+                        <select id="visibility" onchange="updateValuation()">
+                            <option>High</option>
+                            <option>Medium</option>
+                            <option>Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label class="left">Weekly Turnover (£)</label>
+                    <div class="control"><input id="turnover" type="number" step="0.01" placeholder="5000" oninput="updateValuation()"></div>
+                </div>
+
+                <div class="form-row">
+                    <label class="left">Distance from Nearest Station (km)</label>
+                    <div class="control" style="display:flex;align-items:center;gap:12px;">
+                        <input id="distance" type="range" min="0" max="50" step="0.1" value="0" oninput="updateValuation(); document.getElementById('distanceValue').innerText=this.value;">
+                        <span id="distanceValue">0</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label class="left">Distance from Mansion Real Estate (km)</label>
+                    <div class="control" style="display:flex;align-items:center;gap:12px;">
+                        <input id="mansionDistance" type="range" min="0" max="50" step="0.1" value="0" oninput="updateValuation(); document.getElementById('mansionValue').innerText=this.value;">
+                        <span id="mansionValue">0</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label class="left">Profit Margin (%)</label>
+                    <div class="control" style="display:flex;align-items:center;gap:12px;">
+                        <input id="profit" type="range" min="0" max="100" step="0.1" value="0" oninput="updateValuation(); document.getElementById('profitValue').innerText=this.value;">
+                        <span id="profitValue">0</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label class="left">Competition</label>
+                    <div class="control">
+                        <select id="competition" onchange="updateValuation()">
+                            <option>Low</option>
+                            <option>Medium</option>
+                            <option>High</option>
+                            <option>Very High</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TENURE -->
+            <div class="section">
+                <h2>Tenure & Lease</h2>
+
+                <div class="form-row">
+                    <label class="left">Tenure Type</label>
+                    <div class="control">
+                        <select id="tenure" onchange="toggleLeaseFields(); updateValuation()">
+                            <option value="Freehold">Freehold</option>
+                            <option value="Leasehold">Leasehold</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="leaseFields" style="display:none;">
+                    <div class="form-row">
+                        <label class="left">Rent (£ per year)</label>
+                        <div class="control"><input id="rent" type="number" step="0.01" placeholder="12000"></div>
+                    </div>
+                    <div class="form-row">
+                        <label class="left">Lease Years Remaining</label>
+                        <div class="control"><input id="leaseYears" type="number" placeholder="10" oninput="updateValuation()"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PURCHASE & SALE -->
+            <div class="section">
+                <h2>Purchase & Sale</h2>
+                <div class="form-row">
+                    <label class="left">Last Purchase Date</label>
+                    <div class="control"><input id="purchaseDate" type="date"></div>
+                </div>
+                <div class="form-row">
+                    <label class="left">Reason for Sale</label>
+                    <div class="control"><textarea id="reason" placeholder="Owner retiring"></textarea></div>
+                </div>
+            </div>
+
+            <!-- TIMINGS -->
+            <div class="section">
+                <h2>Timings</h2>
+                <div class="form-row" style="align-items:center;">
+                    <label class="left">Opening Time</label>
+                    <div class="control" style="display:flex;gap:12px;align-items:center;">
+                        <input id="defaultOpen" type="time" onchange="updateExtraTimings()">
+                        <span style="font-weight:600;">Closing Time</span>
+                        <input id="defaultClose" type="time" onchange="updateExtraTimings()">
+                    </div>
+                </div>
+
+                <div id="timingsList">
+                    <div class="timing-line"><div class="timing-day-label"><label><input class="timingDay" type="checkbox" value="Mon" checked> Monday</label></div><div class="control"></div></div>
+                    <div class="timing-line"><div class="timing-day-label"><label><input class="timingDay" type="checkbox" value="Tue" checked> Tuesday</label></div><div class="control"></div></div>
+                    <div class="timing-line"><div class="timing-day-label"><label><input class="timingDay" type="checkbox" value="Wed" checked> Wednesday</label></div><div class="control"></div></div>
+                    <div class="timing-line"><div class="timing-day-label"><label><input class="timingDay" type="checkbox" value="Thu" checked> Thursday</label></div><div class="control"></div></div>
+                    <div class="timing-line"><div class="timing-day-label"><label><input class="timingDay" type="checkbox" value="Fri" checked> Friday</label></div><div class="control"></div></div>
+                    <div class="timing-line"><div class="timing-day-label"><label><input class="timingDay" type="checkbox" value="Sat" checked> Saturday</label></div><div class="control"></div></div>
+                    <div class="timing-line"><div class="timing-day-label"><label><input class="timingDay" type="checkbox" value="Sun" checked> Sunday</label></div><div class="control"></div></div>
+                </div>
+            </div>
+
+            <!-- OTHER -->
+            <div class="section">
+                <h2>Other Details</h2>
+                <div class="form-row">
+                    <label class="left">Parking Facility</label>
+                    <div class="control">
+                        <select id="parking">
+                            <option>On-street</option>
+                            <option>Designated Lot</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label class="left">Other Notes</label>
+                    <div class="control"><textarea id="notes" placeholder="Additional info"></textarea></div>
+                </div>
+            </div>
+
+            <!-- VALUATION -->
+<div class="section">
+    <h2>Estimated Property Value (£)</h2>
+    <div id="valuationDisplay" class="value-box">0.00</div>
+</div>
+
+<style>
+/* Box styling for the valuation */
+.value-box {
+    border: 2px solid #4B3A2A;       /* brown border */
+    border-radius: 8px;               /* rounded corners */
+    padding: 12px 18px;               /* space inside the box */
+    text-align: center;               /* center the number */
+    font-size: 28px;                  /* bigger font */
+    font-weight: 700;                 /* bold */
+    background-color: #fff;           /* white background */
+    color: #4B3A2A;                   /* brown text */
+    max-width: 300px;                 /* optional width */
+    margin: 8px auto;                 /* center horizontally */
+}
+</style>
+
+
+            <!-- SEND & CONSENT -->
+            <div class="section">
+                <div class="form-row">
+                    <label class="left">Send enquiry to Mansion Real Estate? <span class="req">*</span></label>
+                    <div class="control">
+                        <label style="margin-right:10px;"><input type="radio" name="sendToMansion" value="No" checked> Don't send enquiry</label>
+                        <label><input type="radio" name="sendToMansion" value="Yes"> Send enquiry</label>
+                    </div>
+                </div>
+
+                <div class="form-row" id="consentBlock" style="display:none;">
+                    <label class="left">Contact permission</label>
+                    <div class="control">
+                        <label style="display:block;margin-bottom:6px;"><input id="consentCheck" type="checkbox"> I consent Mansion Real Estate to contact me regarding this enquiry</label>
+                        <div class="small">If unchecked, your enquiry will be received but Mansion Real Estate will not contact you.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align:right;margin-top:8px;">
+                <button id="saveBtn" type="button">Save Information</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- Thank-you overlay -->
+<div id="thankYouOverlay" class="thankyou">
+    <div class="box">
+        <h2 id="thankTitle">Thanks</h2>
+        <p id="thankMessage" class="small"></p>
+        <div style="margin-top:14px;"><button onclick="closeThankYou()">Close</button></div>
+    </div>
+</div>
+
+<script>
+/* ---------- Utility ---------- */
+function $(id){return document.getElementById(id);}
+
+/* ---------- UI toggles ---------- */
+function toggleLeaseFields(){
+    $('leaseFields').style.display = $('tenure').value === 'Leasehold' ? 'block' : 'none';
+}
+function toggleRefurbishDate(){
+    $('refurbishDateRow').style.display = $('condition').value === 'Refurbished' ? 'flex' : 'none';
+}
+function updateSendUI(){
+    const v = document.querySelector('input[name="sendToMansion"]:checked').value;
+    $('consentBlock').style.display = v === 'Yes' ? 'flex' : 'none';
+}
+
+/* ---------- Timings extra inputs ---------- */
+function updateExtraTimings(){
+    document.querySelectorAll('.extraTimingInline').forEach(el=>el.remove());
+    const defaultOpen = $('defaultOpen').value || '';
+    const defaultClose = $('defaultClose').value || '';
+    document.querySelectorAll('.timingDay').forEach(cb=>{
+        const day = cb.value;
+        const line = cb.closest('.timing-line');
+        if (!cb.checked) {
+            const extra = document.createElement('div');
+            extra.className = 'extraTimingInline';
+            extra.innerHTML = `
+                <div style="font-weight:600;margin-bottom:6px;">Custom timing for ${day}:</div>
+                <div style="display:flex;gap:12px;align-items:center;">
+                    <div>Open: <input class="extraOpen" data-day="${day}" type="time" value="${defaultOpen}"></div>
+                    <div>Close: <input class="extraClose" data-day="${day}" type="time" value="${defaultClose}"></div>
+                </div>
+            `;
+            line.parentNode.insertBefore(extra, line.nextSibling);
+        }
+    });
+}
+
+/* ---------- Valuation (REALISTIC Option A) ---------- */
+/* Formula:
+   annualProfit = weeklyTurnover * (profitMargin/100) * 52
+   finalValue = annualProfit * 1.5 * visibilityFactor * conditionFactor * tenureFactor * competitionFactor * distanceFactor * storeTypeFactor
+*/
+function computeValuation(){
+    const turnover = parseFloat($('turnover').value) || 0;
+    const profitPct = parseFloat($('profit').value) || 0;
+
+    // annual net profit
+    const annualProfit = turnover * (profitPct/100) * 52;
+
+    // multipliers
+    const visibility = $('visibility').value;
+    const visibilityFactor = visibility === 'High' ? 1.2 : (visibility === 'Medium' ? 1.0 : 0.8);
+
+    const condition = $('condition').value;
+    const conditionFactor = condition === 'New' ? 1.2 : (condition === 'Refurbished' ? 1.1 : 1.0);
+
+    const tenure = $('tenure').value;
+    const tenureFactor = tenure === 'Freehold' ? 1.20 : 1.00; // freehold gets boost
+
+    const competition = $('competition').value;
+    const competitionFactor = competition === 'Low' ? 1.05 : (competition === 'Medium' ? 1.0 : (competition === 'High' ? 0.90 : 0.80));
+
+    // distance factor with safe clamp (avoid zero/negative)
+    const distance = parseFloat($('distance').value) || 0;
+    const mansionDistance = parseFloat($('mansionDistance').value) || 0;
+    let distanceFactor = 1 - ((distance + mansionDistance) / 300);
+    if (distanceFactor < 0.65) distanceFactor = 0.65; // minimum floor so values don't crash
+    if (distanceFactor > 1.15) distanceFactor = 1.15; // small cap
+
+    // Store type factor (ADDED)
+    const storeType = $('storeType') ? $('storeType').value : 'other';
+    const storeTypeFactorMap = {
+        'off-licence': 1.10,
+        'convenience': 1.00,
+        'food-cafe': 0.95,
+        'other': 0.90
+    };
+    const storeTypeFactor = storeTypeFactorMap[storeType] || 1.0;
+
+    const base = 1.5;
+    let value = annualProfit * base * visibilityFactor * conditionFactor * tenureFactor * competitionFactor * distanceFactor * storeTypeFactor;
+
+    if (!isFinite(value) || value < 0) value = 0;
+    return Math.round(value);
+}
+
+/* ---------- Email compose (client) ---------- */
+function getEmail(){
+    const u = ($('emailUser').value || '').trim();
+    const d = ($('emailDomain').value || '').trim();
+    return u ? (u + '@' + d) : '';
+}
+
+/* ---------- Collect timings ---------- */
+function collectTimings(){
+    const defOpen = $('defaultOpen').value || '';
+    const defClose = $('defaultClose').value || '';
+    const t = {};
+    document.querySelectorAll('.timingDay').forEach(cb=>{
+        const day = cb.value;
+        if (cb.checked) {
+            t[day] = {open:defOpen, close:defClose};
+        } else {
+            const eo = document.querySelector('.extraOpen[data-day="'+day+'"]');
+            const ec = document.querySelector('.extraClose[data-day="'+day+'"]');
+            t[day] = {open: eo ? eo.value : '', close: ec ? ec.value : ''};
+        }
+    });
+    return t;
+}
+
+/* ---------- Validation ---------- */
+function validateRequired(){
+    const missing = [];
+    if (!$('name').value.trim()) missing.push('Name');
+    if (!$('surname').value.trim()) missing.push('Surname');
+    if (!$('phone').value.trim()) missing.push('Contact Number');
+    if (!getEmail()) missing.push('Email');
+    if (!$('address').value.trim()) missing.push('Shop Address');
+    if (!document.querySelector('input[name="sendToMansion"]:checked')) missing.push('Send enquiry decision');
+    return missing;
+}
+
+/* ---------- Save / CSV logic for Send=Yes + email trigger ---------- */
+let allProperties = [];
+
+function sendEmailToMansion(prop) {
+    // Sends JSON to sendMail.php (server-side) to deliver email via SMTP.
+    fetch("sendMail.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(prop)
+    })
+    .then(res => res.text())
+    .then(txt => console.log("MAIL SERVER:", txt))
+    .catch(err => console.error("MAIL ERROR:", err));
+}
+
+function saveProperty(){
+    const missing = validateRequired();
+    if (missing.length){
+        alert('Please fill required fields:\n• ' + missing.join('\n• '));
+        return;
+    }
+
+    const sendDecision = document.querySelector('input[name="sendToMansion"]:checked').value;
+    const consent = $('consentCheck') && $('consentCheck').checked;
+
+    const prop = {
+        timestamp: new Date().toISOString(),
+        name: $('name').value.trim(),
+        surname: $('surname').value.trim(),
+        countryCode: $('countryCode').value,
+        contactNumber: $('phone').value.trim(),
+        email: getEmail(),
+        contactMethod: $('contactMethod') ? $('contactMethod').value : '',
+        address: $('address').value.trim(),
+        size: $('size').value || '',
+        storeType: $('storeType') ? $('storeType').value : '',
+        condition: $('condition').value || '',
+        refurbDate: $('refurbishDate') ? $('refurbishDate').value : '',
+        visibility: $('visibility').value || '',
+        turnover: $('turnover').value || '',
+        distance: $('distance').value || '',
+        mansionDistance: $('mansionDistance').value || '',
+        profit: $('profit').value || '',
+        competition: $('competition').value || '',
+        tenure: $('tenure').value || '',
+        rent: $('rent') ? $('rent').value : '',
+        leaseYears: $('leaseYears') ? $('leaseYears').value : '',
+        purchaseDate: $('purchaseDate') ? $('purchaseDate').value : '',
+        reason: $('reason').value || '',
+        parking: $('parking') ? $('parking').value : '',
+        notes: $('notes').value || '',
+        timings: collectTimings(),
+        consentGiven: consent,
+        estimatedValue: computeValuation(),
+        sendDecision: sendDecision
+    };
+
+    // If user chose to send enquiry, append to session array and trigger CSV download + send email
+    if (sendDecision === 'Yes') {
+        allProperties.push(prop);
+
+        // Send email server-side
+        try { sendEmailToMansion(prop); } catch(e){ console.error(e); }
+
+        // Construct CSV (keeps existing behavior)
+        let csv = "data:text/csv;charset=utf-8,";
+        csv += "Timestamp,Name,Surname,CountryCode,ContactNumber,Email,ContactMethod,Address,Size(sqft),StoreType,Condition,RefurbDate,Visibility,Turnover,Distance,DistanceFromMansion,Profit,Competition,Tenure,Rent,LeaseYears,PurchaseDate,Reason,Timings,Parking,Notes,Consent,EstimatedValue,SendDecision\n";
+        allProperties.forEach(p=>{
+            const timingsStr = Object.entries(p.timings).map(([d,t]) => `${d}:${t.open}-${t.close}`).join("|");
+            const addressEsc = `"${(p.address||'').replace(/"/g,'""')}"`;
+            const notesEsc = `"${(p.notes||'').replace(/"/g,'""')}"`;
+            csv += `${p.timestamp},${p.name},${p.surname},${p.countryCode},${p.contactNumber},${p.email},${p.contactMethod},${addressEsc},${p.size},${p.storeType},${p.condition},${p.refurbDate},${p.visibility},${p.turnover},${p.distance},${p.mansionDistance},${p.profit},${p.competition},${p.tenure},${p.rent},${p.leaseYears},${p.purchaseDate},${p.reason},"${timingsStr}",${p.parking},${notesEsc},${p.consentGiven},${p.estimatedValue},${p.sendDecision}\n`;
+        });
+        const encoded = encodeURI(csv);
+        const link = document.createElement("a");
+        link.setAttribute("href", encoded);
+        link.setAttribute("download", "mansion_offlicense_submissions.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } else {
+        // Don't append or download if they chose not to send
+    }
+
+    // Show thank-you messages according to your rules
+    if (sendDecision === 'No') {
+        showThankYou("Thanks! Your form has been submitted.", "We have received your submission.");
+    } else {
+        if (prop.consentGiven) {
+            showThankYou("Thanks for your enquiry with Mansion Real Estate", "Our team will get in touch with you shortly.");
+        } else {
+            showThankYou("Thanks for your enquiry", "Your form has been submitted.");
+        }
+    }
+}
+
+/* ---------- Thank-you overlay ---------- */
+function showThankYou(title,msg){
+    $('thankTitle').innerText = title;
+    $('thankMessage').innerText = msg;
+    $('thankYouOverlay').style.display = 'flex';
+}
+function closeThankYou(){
+    $('thankYouOverlay').style.display = 'none';
+    // optionally keep form values (we keep them)
+}
+
+/* ---------- Live wiring ---------- */
+['turnover','profit','visibility','condition','competition','tenure','distance','mansionDistance','size','storeType','leaseYears'].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) {
+        el.addEventListener('input', ()=>{ $('valuationDisplay').innerText = computeValuation().toLocaleString(); });
+        el.addEventListener('change', ()=>{ $('valuationDisplay').innerText = computeValuation().toLocaleString(); });
+    }
+});
+document.getElementById('distance').addEventListener('input', ()=>{$('distanceValue').innerText = $('distance').value; $('valuationDisplay').innerText = computeValuation().toLocaleString();});
+document.getElementById('mansionDistance').addEventListener('input', ()=>{$('mansionValue').innerText = $('mansionDistance').value; $('valuationDisplay').innerText = computeValuation().toLocaleString();});
+document.getElementById('profit').addEventListener('input', ()=>{$('profitValue').innerText = $('profit').value; $('valuationDisplay').innerText = computeValuation().toLocaleString();});
+
+// timings wiring
+document.querySelectorAll('.timingDay').forEach(cb => cb.addEventListener('change', updateExtraTimings));
+$('defaultOpen').addEventListener('change', updateExtraTimings);
+$('defaultClose').addEventListener('change', updateExtraTimings);
+
+// send/consent UI
+document.querySelectorAll('input[name="sendToMansion"]').forEach(r => r.addEventListener('change', updateSendUI));
+updateSendUI();
+updateExtraTimings();
+$('valuationDisplay').innerText = computeValuation().toLocaleString();
+
+// Save button
+$('saveBtn').addEventListener('click', saveProperty);
+
+</script>
+</body>
+</html>
+
